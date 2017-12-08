@@ -47,10 +47,10 @@
     
 })();
 
-// vectorizeScalar
+// fromScalar
 (function(){
     
-    var v = Vector2.vectorizeScalar(2);
+    var v = Vector2.fromScalar(2);
     
     console.assert(v !== undefined);
     console.assert(v.x === 2);
@@ -221,10 +221,10 @@
     
 })();
 
-// vectorizeScalar
+// fromScalar
 (function(){
     
-    var v = Vector3.vectorizeScalar(2);
+    var v = Vector3.fromScalar(2);
     
     console.assert(v !== undefined);
     console.assert(v.x === 2);
@@ -317,7 +317,7 @@
     
 })();
 
-// cross TODO
+// cross
 (function(){
     
     var q = new Vector3(1, 0, 0);

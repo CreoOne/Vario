@@ -21,7 +21,7 @@ Vector2.prototype.normalize = function()
     return new Vector2(this.x / magnitude, this.y / magnitude);
 };
 
-Vector2.vectorizeScalar = function(scalar)
+Vector2.fromScalar = function(scalar)
 {
     return new Vector2(scalar, scalar);
 };
@@ -90,7 +90,7 @@ Vector3.prototype.normalize = function()
     return new Vector3(this.x / magnitude, this.y / magnitude, this.z / magnitude);
 };
 
-Vector3.vectorizeScalar = function(scalar)
+Vector3.fromScalar = function(scalar)
 {
     return new Vector3(scalar, scalar, scalar);
 };

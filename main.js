@@ -13,7 +13,7 @@ var canvasDataHolder = new CanvasDataHolder();
 var resizeHandler = function(e)
 {
     canvasDataHolder.size = new Vector2(window.screen.width, window.screen.height);
-    canvasDataHolder.middle = Vector2.div(canvasDataHolder.size, Vector2.vectorizeScalar(2));
+    canvasDataHolder.middle = Vector2.div(canvasDataHolder.size, Vector2.fromScalar(2));
 
     canvas.width = canvasDataHolder.size.x;
     canvas.height = canvasDataHolder.size.y;
