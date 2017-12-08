@@ -346,3 +346,16 @@
     console.assert(v.z === -0.5);
     
 })();
+
+// rotateAroundAxis
+(function(){
+    
+    var q = new Vector3(1, 0, 0);
+    var axis = new Vector3(0, 0, 1);
+    
+    var v = Vector3.rotateAroundAxis(q, axis, Math.PI / 2);
+
+    console.assert(v !== undefined);
+    console.assert(Vector3.closeEnough(v, new Vector3(0, 1, 0), 1e-6) === true);
+    
+})();

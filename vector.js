@@ -135,3 +135,16 @@ Vector3.lerp = function(q, r, position)
 {
     return new Vector3(q.x + (r.x - q.x) * position, q.y + (r.y - q.y) * position, q.z + (r.z - q.z) * position);
 };
+
+Vector3.rotateAroundAxis = function(v, axis, theta)
+{
+    var cosTheta = Vector3.fromScalar(Math.cos(theta));
+    var sinTheta = Vector3.fromScalar(Math.sin(theta));
+
+    var primary = Vector3.mul(v, cosTheta);
+    var secondary = Vector3.mul(Vector3.cross(axis, v), sinTheta);
+    var thirdary = Vector3.mul(axis, Vector3.fromScalar(Vector3.dot(axis, v) * (1.0 - Math.cos(theta))));
+
+    // v * cos(theta) + cross(k, v) * sin(theta) + k * dot(k, v) * (1 - cos(theta));
+    return Vector3.add(Vector3.add(primary, secondary), thirdary);
+};
