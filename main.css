@@ -5,10 +5,3 @@
     border: none;
     outline: none;
 }
-
-#canvasLeft, #canvasRight
-{
-    /*position: relative;
-    display: inline-block;*/
-    float: left;
-}
