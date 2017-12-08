@@ -39,20 +39,17 @@ var calculateMove = function(a, b, min, max)
 };
 
 var deviceOrientationHandler = function(e)
-{
-    if(spatialDataHolder.rawOrientation.z < -30 && e.gamma > 30)
-    {
-        spatialDataHolder.rawOrientation.x -= spatialDataHolder.rawOrientation.x >= 180 ? 180 : -180;
-    }
+{ 
+    var raw = new Vector3(e.alpha / 180 - 1, e.gamma / 90, e.beta / 180);
 
-    else if(spatialDataHolder.rawOrientation.z > 30 && e.gamma < -30)
-    {
-        spatialDataHolder.rawOrientation.x += spatialDataHolder.rawOrientation.x >= 180 ? -180 : 180;
-    }
+    var move = Vector3.sub(
+        calculateMove(spatialDataHolder.rawOrientation.x, raw.x, -1, 1),
+        calculateMove(spatialDataHolder.rawOrientation.y, raw.y, -1, 1),
+        calculateMove(spatialDataHolder.rawOrientation.z, raw.z, -1, 1)
+    );
 
-    var move = new Vector3(calculateMove(spatialDataHolder.rawOrientation.x, e.alpha, 0, 360), calculateMove(spatialDataHolder.rawOrientation.y, e.beta, -180, 180), calculateMove(spatialDataHolder.rawOrientation.z, e.gamma, -90, 90));
-
-    spatialDataHolder.rawOrientation = new Vector3(e.alpha, e.beta, e.gamma);
+    spatialDataHolder.rawOrientation = raw;
+    
     spatialDataHolder.orientation = Vector3.add(spatialDataHolder.orientation, move);
 };
 
@@ -70,16 +67,16 @@ var redraw = function()
     context.fillStyle = "black";
     context.fillRect(0, 0, canvasDataHolder.size.x, canvasDataHolder.size.y);
 
-    var x = canvasDataHolder.middle.x + spatialDataHolder.orientation.x;
-    var y = canvasDataHolder.middle.y - spatialDataHolder.orientation.z;
+    var x = canvasDataHolder.middle.x + spatialDataHolder.orientation.x * canvasDataHolder.middle.x;
+    var y = canvasDataHolder.middle.y - spatialDataHolder.orientation.y * canvasDataHolder.middle.y;
 
     context.fillStyle = "white";
     context.fillRect(x - 5, y - 5, 10, 10);
 
     context.font = "10px Arial";
     context.fillStyle = "rgba(255, 255, 255, 0.7)";
-    context.fillText("r: "+Math.round(spatialDataHolder.rawOrientation.x)+" "+Math.round(spatialDataHolder.rawOrientation.y)+" "+Math.round(spatialDataHolder.rawOrientation.z), 10, 15);
-    context.fillText("o: "+Math.round(spatialDataHolder.orientation.x)+" "+Math.round(spatialDataHolder.orientation.y)+" "+Math.round(spatialDataHolder.orientation.z), 10, 25);
+    context.fillText("r: "+Math.round(spatialDataHolder.rawOrientation.x * 100)+" "+Math.round(spatialDataHolder.rawOrientation.y * 100)+" "+Math.round(spatialDataHolder.rawOrientation.z * 100), 10, 15);
+    context.fillText("o: "+Math.round(spatialDataHolder.orientation.x * 100)+" "+Math.round(spatialDataHolder.orientation.y * 100)+" "+Math.round(spatialDataHolder.orientation.z * 100), 10, 25);
 
     window.requestAnimationFrame(redraw);
 };
