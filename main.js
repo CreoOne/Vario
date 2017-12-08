@@ -41,15 +41,12 @@ var calculateMove = function(a, b, min, max)
 var deviceOrientationHandler = function(e)
 { 
     var raw = new Vector3(e.alpha / 180 - 1, e.gamma / 90, e.beta / 180);
-
-    var move = Vector3.sub(
-        calculateMove(spatialDataHolder.rawOrientation.x, raw.x, -1, 1),
-        calculateMove(spatialDataHolder.rawOrientation.y, raw.y, -1, 1),
-        calculateMove(spatialDataHolder.rawOrientation.z, raw.z, -1, 1)
-    );
-
+    var move = Vector3.sub(spatialDataHolder.rawOrientation, raw);
     spatialDataHolder.rawOrientation = raw;
-    
+
+    if(Math.abs(move.x) > 0.5 || Math.abs(move.y) > 0.5 || Math.abs(move.z) > 0.5)
+        return;
+
     spatialDataHolder.orientation = Vector3.add(spatialDataHolder.orientation, move);
 };
 
