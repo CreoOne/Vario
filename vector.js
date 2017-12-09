@@ -51,6 +51,11 @@ Vector2.div = function(q, r)
     return new Vector2(q.x / r.x, q.y / r.y);
 };
 
+Vector2.mod = function(q, r)
+{
+    return new Vector2(q.x % r.x, q.y % r.y)
+};
+
 Vector2.dot = function(q, r)
 {
     var m = Vector2.mul(q, r);
@@ -118,6 +123,11 @@ Vector3.mul = function(q, r)
 Vector3.div = function(q, r)
 {
     return new Vector3(q.x / r.x, q.y / r.y, q.z / r.z);
+};
+
+Vector3.mod = function(q, r)
+{
+    return new Vector3(q.x % r.x, q.y % r.y, q.z % r.z);
 };
 
 Vector3.dot = function(q, r)

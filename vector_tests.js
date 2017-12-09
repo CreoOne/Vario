@@ -125,6 +125,20 @@
     
 })();
 
+// mod
+(function(){
+    
+    var q = new Vector2(3, 8);
+    var r = new Vector2(2, 3);
+    
+    var v = Vector2.mod(q, r);
+
+    console.assert(v !== undefined);
+    console.assert(v.x === 1);
+    console.assert(v.y === 2);
+    
+})();
+
 // dot
 (function(){
     
@@ -301,6 +315,21 @@
     console.assert(v.x === 3);
     console.assert(v.y === 4);
     console.assert(v.z === 5);
+    
+})();
+
+// mod
+(function(){
+    
+    var q = new Vector3(3, 8, 11);
+    var r = new Vector3(2, 3, 4);
+    
+    var v = Vector3.mod(q, r);
+
+    console.assert(v !== undefined);
+    console.assert(v.x === 1);
+    console.assert(v.y === 2);
+    console.assert(v.z === 3);
     
 })();
 
