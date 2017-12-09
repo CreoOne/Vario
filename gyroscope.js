@@ -11,7 +11,11 @@ Gyroscope.prototype.handleOrientationEvent = function(e)
         return;
 
     var raw = new Vector3(e.alpha / 180 - 1, e.gamma / 90, e.beta / 180);
-    var move = Vector3.mod(Vector3.sub(this.previousRawOrientation, raw), Vector3.fromScalar(0.25));
+    var move = Vector3.sub(this.previousRawOrientation, raw);
     this.previousRawOrientation = raw;
+
+    if(Math.abs(move.x) > 0.7 || Math.abs(move.y) > 0.7 || Math.abs(move.z) > 0.7)
+        return;
+
     this.orientation = Vector3.add(this.orientation, move);
 };
