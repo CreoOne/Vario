@@ -48,8 +48,12 @@ var redraw = function(t)
     var x = canvasDataHolder.middle.x + gyroscope.orientation.x * canvasDataHolder.middle.x;
     var y = canvasDataHolder.middle.y - gyroscope.orientation.y * canvasDataHolder.middle.y;
     
-    context.fillStyle = "white";
-    context.fillRect(x - 5, y - 5, 10, 10);
+    context.lineCap = "butt";
+    context.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    context.lineWidth = 3;
+    context.beginPath();
+    context.arc(x, y, 8, 0, Math.PI * 2);
+    context.stroke();
     
     context.font = "10px Arial";
     context.fillStyle = "rgba(255, 255, 255, 0.7)";
