@@ -43,16 +43,6 @@ var redraw = function(t)
     context.beginPath();
     context.arc(gx, gy, 8, 0, Math.PI * 2);
     context.stroke();
-
-    var ax = canvasDataHolder.middle.x + accelerator.position.x;
-    var ay = canvasDataHolder.middle.y - accelerator.position.y;
-
-    context.lineCap = "butt";
-    context.strokeStyle = "rgba(255, 0, 0, 0.4)";
-    context.lineWidth = 3;
-    context.beginPath();
-    context.arc(ax, ay, 8, 0, Math.PI * 2);
-    context.stroke();
     
     context.font = "10px Arial";
     context.fillStyle = "rgba(255, 255, 255, 0.7)";
