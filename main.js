@@ -2,6 +2,15 @@
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
+var Configuration = function()
+{
+    this.PhoneDiagonal = 13.2;
+    this.OcularsSpacing = 6.5;
+    this.OcularsDistance = 4.5;
+};
+
+var configuration = new Configuration();
+
 var CanvasDataHolder = function()
 {
     this.size = new Vector2();
@@ -38,13 +47,23 @@ var redraw = function(t)
     var gy = canvasDataHolder.middle.y - gyroscope.orientation.y * canvasDataHolder.middle.y;
     
     context.lineCap = "butt";
-    context.strokeStyle = "rgba(255, 255, 255, 0.4)";
-    context.lineWidth = 3;
+    context.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    context.lineWidth = 2;
+
+    var pixelsPerCentimeter = canvasDataHolder.size.magnitude() / configuration.PhoneDiagonal;
+    var ocularShift = pixelsPerCentimeter * (configuration.OcularsSpacing / 2);
+
+    //left
     context.beginPath();
-    context.arc(gx, gy, 8, 0, Math.PI * 2);
+    context.arc(gx - ocularShift, gy, 8, 0, Math.PI * 2);
+    context.stroke();
+
+    //right
+    context.beginPath();
+    context.arc(gx + ocularShift, gy, 8, 0, Math.PI * 2);
     context.stroke();
     
-    context.font = "10px Arial";
+    context.font = "10px Tahoma";
     context.fillStyle = "rgba(255, 255, 255, 0.7)";
     context.fillText("fps: " + Math.round(timer.fps), 10, 15);
     context.fillText("s: " + canvasDataHolder.size.x + " " + canvasDataHolder.size.y, 10, 25);
