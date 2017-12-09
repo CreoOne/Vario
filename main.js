@@ -24,14 +24,9 @@ window.addEventListener("resize", resizeHandler, false);
 var SpatialDataHolder = function()
 {
     this.acceleration = new Vector3();
-    this.rawOrientation = new Vector3();
-    this.orientation = new Vector3();
 };
 
 var spatialDataHolder = new SpatialDataHolder();
-
-var gyroscope = new Gyroscope();
-window.addEventListener("deviceorientation", gyroscope.handleOrientationEvent, false);
 
 var deviceMotionHandler = function(e)
 {
@@ -40,21 +35,28 @@ var deviceMotionHandler = function(e)
 
 window.addEventListener("devicemotion", deviceMotionHandler, false);
 
-var redraw = function()
+var gyroscope = new Gyroscope();
+window.addEventListener("deviceorientation", gyroscope.handleOrientationEvent, false);
+
+var timer = new Timer();
+
+var redraw = function(t)
 {
     context.fillStyle = "black";
     context.fillRect(0, 0, canvasDataHolder.size.x, canvasDataHolder.size.y);
-
+    
     var x = canvasDataHolder.middle.x + gyroscope.orientation.x * canvasDataHolder.middle.x;
     var y = canvasDataHolder.middle.y - gyroscope.orientation.y * canvasDataHolder.middle.y;
-
+    
     context.fillStyle = "white";
     context.fillRect(x - 5, y - 5, 10, 10);
-
+    
     context.font = "10px Arial";
     context.fillStyle = "rgba(255, 255, 255, 0.7)";
-    context.fillText("o: "+Math.round(gyroscope.orientation.x * 100)+" "+Math.round(gyroscope.orientation.y * 100)+" "+Math.round(gyroscope.orientation.z * 100), 10, 15);
-
+    context.fillText("fps: " + Math.round(timer.fps), 10, 15);
+    context.fillText("o: "+Math.round(gyroscope.orientation.x * 100)+" "+Math.round(gyroscope.orientation.y * 100)+" "+Math.round(gyroscope.orientation.z * 100), 10, 25);
+    
+    timer.tick();
     window.requestAnimationFrame(redraw);
 };
 
