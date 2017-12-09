@@ -21,19 +21,8 @@ var resizeHandler = function(e)
 
 window.addEventListener("resize", resizeHandler, false);
 
-var SpatialDataHolder = function()
-{
-    this.acceleration = new Vector3();
-};
-
-var spatialDataHolder = new SpatialDataHolder();
-
-var deviceMotionHandler = function(e)
-{
-    spatialDataHolder.acceleration = new Vector3(e.acceleration.x, e.acceleration.y, e.acceleration.z);
-};
-
-window.addEventListener("devicemotion", deviceMotionHandler, false);
+var accelerator = new Accelerator();
+window.addEventListener("devicemotion", function(e){ accelerator.handleMotionEvent(e); }, false);
 
 var gyroscope = new Gyroscope();
 window.addEventListener("deviceorientation", function(e){ gyroscope.handleOrientationEvent(e); }, false);
@@ -45,14 +34,24 @@ var redraw = function(t)
     context.fillStyle = "black";
     context.fillRect(0, 0, canvasDataHolder.size.x, canvasDataHolder.size.y);
     
-    var x = canvasDataHolder.middle.x + gyroscope.orientation.x * canvasDataHolder.middle.x;
-    var y = canvasDataHolder.middle.y - gyroscope.orientation.y * canvasDataHolder.middle.y;
+    var gx = canvasDataHolder.middle.x + gyroscope.orientation.x * canvasDataHolder.middle.x;
+    var gy = canvasDataHolder.middle.y - gyroscope.orientation.y * canvasDataHolder.middle.y;
     
     context.lineCap = "butt";
-    context.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    context.strokeStyle = "rgba(255, 255, 255, 0.4)";
     context.lineWidth = 3;
     context.beginPath();
-    context.arc(x, y, 8, 0, Math.PI * 2);
+    context.arc(gx, gy, 8, 0, Math.PI * 2);
+    context.stroke();
+
+    var ax = canvasDataHolder.middle.x + accelerator.position.x;
+    var ay = canvasDataHolder.middle.y - accelerator.position.y;
+
+    context.lineCap = "butt";
+    context.strokeStyle = "rgba(255, 0, 0, 0.4)";
+    context.lineWidth = 3;
+    context.beginPath();
+    context.arc(ax, ay, 8, 0, Math.PI * 2);
     context.stroke();
     
     context.font = "10px Arial";
@@ -60,6 +59,7 @@ var redraw = function(t)
     context.fillText("fps: " + Math.round(timer.fps), 10, 15);
     context.fillText("s: " + canvasDataHolder.size.x + " " + canvasDataHolder.size.y, 10, 25);
     context.fillText("o: "+Math.round(gyroscope.orientation.x * 100)+" "+Math.round(gyroscope.orientation.y * 100)+" "+Math.round(gyroscope.orientation.z * 100), 10, 35);
+    context.fillText("p: "+Math.round(accelerator.position.x)+" "+Math.round(accelerator.position.y)+" "+Math.round(accelerator.position.z), 10, 45);
     
     timer.tick();
     window.requestAnimationFrame(redraw);
