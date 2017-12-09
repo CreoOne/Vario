@@ -36,7 +36,7 @@ var deviceMotionHandler = function(e)
 window.addEventListener("devicemotion", deviceMotionHandler, false);
 
 var gyroscope = new Gyroscope();
-window.addEventListener("deviceorientation", gyroscope.handleOrientationEvent, false);
+window.addEventListener("deviceorientation", function(e){ gyroscope.handleOrientationEvent(e); }, false);
 
 var timer = new Timer();
 
