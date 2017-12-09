@@ -58,7 +58,8 @@ var redraw = function(t)
     context.font = "10px Arial";
     context.fillStyle = "rgba(255, 255, 255, 0.7)";
     context.fillText("fps: " + Math.round(timer.fps), 10, 15);
-    context.fillText("o: "+Math.round(gyroscope.orientation.x * 100)+" "+Math.round(gyroscope.orientation.y * 100)+" "+Math.round(gyroscope.orientation.z * 100), 10, 25);
+    context.fillText("s: " + canvasDataHolder.size.x + " " + canvasDataHolder.size.y, 10, 25);
+    context.fillText("o: "+Math.round(gyroscope.orientation.x * 100)+" "+Math.round(gyroscope.orientation.y * 100)+" "+Math.round(gyroscope.orientation.z * 100), 10, 35);
     
     timer.tick();
     window.requestAnimationFrame(redraw);
