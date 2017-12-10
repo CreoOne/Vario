@@ -1,4 +1,10 @@
 
+var round = function(number, precision)
+{
+    var tenth = Math.pow(10, precision);
+    return Math.round(number / tenth) * tenth;
+};
+
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
@@ -47,12 +53,12 @@ var redraw = function(t)
     var textX = Math.max(-renderer.ocularShift + 10, 10);
     renderer.uiText("fps: " + Math.round(timer.fps), new Vector2(textX, 15), fontColor);
     renderer.uiText("s: " + renderer.size.x * 2 + " " + renderer.size.y, new Vector2(textX, 25), fontColor);
-    renderer.uiText("o: " + gyroscope.orientation.x + " " + gyroscope.orientation.y, new Vector2(textX, 35), fontColor);
+    renderer.uiText("o: " + round(gyroscope.orientation.x, -3) + " " + Math.round(gyroscope.orientation.y, -3), new Vector2(textX, 35), fontColor);
 
     renderer.render(context);
     timer.tick();
     window.requestAnimationFrame(redraw);
 };
 
-window.requestAnimationFrame(redraw);
 resizeHandler();
+window.requestAnimationFrame(redraw);
