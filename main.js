@@ -36,7 +36,7 @@ window.addEventListener("resize", resizeHandler, false);
 var accelerator = new Accelerator();
 window.addEventListener("devicemotion", function(e)
 {
-    accelerator.strength = timer.fps * 2;
+    accelerator.strength = timer.fps / 2;
     accelerator.handleMotionEvent(e);
     renderer.motionShift = accelerator.motion;
 
@@ -64,9 +64,10 @@ var redraw = function(t)
     renderer.uiCircle(position, 8, "rgba(255, 255, 255, 1.0)", 1);*/
 
     var circlesColor = "rgba(255, 255, 255, 1.0)";
-    renderer.propCircle(new Vector3(-1, 0, 0.1), 10, circlesColor, 1);
-    renderer.propCircle(new Vector3(0, 0, 0.2), 10, circlesColor, 1);
-    renderer.propCircle(new Vector3(1, 0, 0.3), 10, circlesColor, 1);
+    renderer.propCircle(new Vector3(0, 0, 10), 10, circlesColor, 1);
+    renderer.propCircle(new Vector3(0, 0, 20), 10, circlesColor, 1);
+    renderer.propCircle(new Vector3(0, 0, 30), 10, circlesColor, 1);
+    renderer.propCircle(new Vector3(0, 0, 100), 10, circlesColor, 1);
 
     var fontColor = "rgba(255, 255, 255, 1.0)";
     var textX = Math.max(-renderer.ocularShift + 20, 20);

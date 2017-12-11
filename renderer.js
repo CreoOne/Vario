@@ -142,7 +142,7 @@ Renderer.prototype.applyRotation = function(position)
 
 Renderer.prototype.applyMotionShift = function(position)
 {
-    return Vector3.sub(position, Vector3.mul(this.motionShift, new Vector3(10, 10, 0.02)));
+    return Vector3.sub(position, Vector3.mul(this.motionShift, new Vector3(50, 50, 10)));
 };
 
 Renderer.prototype.applyOcularShift = function(position, left)
@@ -152,5 +152,5 @@ Renderer.prototype.applyOcularShift = function(position, left)
 
 Renderer.prototype.applyPerspective = function(position)
 {
-    return Vector3.div(position, new Vector3(position.z, position.z, 1));
+    return Vector3.div(position, new Vector3(position.z / 100, position.z / 100, 100));
 };
