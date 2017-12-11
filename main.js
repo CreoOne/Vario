@@ -64,9 +64,9 @@ var redraw = function(t)
     renderer.uiCircle(position, 8, "rgba(255, 255, 255, 1.0)", 1);*/
 
     var circlesColor = "rgba(255, 255, 255, 1.0)";
-    renderer.propCircle(new Vector3(0, 0, 0.1), 10, circlesColor, 0.1);
-    renderer.propCircle(new Vector3(0, 0, 0.2), 10, circlesColor, 0.1);
-    renderer.propCircle(new Vector3(0, 0, 0.3), 10, circlesColor, 0.1);
+    renderer.propCircle(new Vector3(-1, 0, 0.1), 10, circlesColor, 1);
+    renderer.propCircle(new Vector3(0, 0, 0.2), 10, circlesColor, 1);
+    renderer.propCircle(new Vector3(1, 0, 0.3), 10, circlesColor, 1);
 
     var fontColor = "rgba(255, 255, 255, 1.0)";
     var textX = Math.max(-renderer.ocularShift + 20, 20);

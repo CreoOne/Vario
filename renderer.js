@@ -147,7 +147,7 @@ Renderer.prototype.applyMotionShift = function(position)
 
 Renderer.prototype.applyOcularShift = function(position, left)
 {
-    return Vector3.add(position, new Vector3(left ? this.ocularSpacing / 200 : this.ocularSpacing / -200, 0, 0));
+    return Vector3.add(position, new Vector3(left ? this.ocularSpacing / 2 : this.ocularSpacing / -2, 0, 0));
 };
 
 Renderer.prototype.applyPerspective = function(position)
