@@ -14,6 +14,9 @@ var Renderer = function()
 
     this.rightView = document.createElement("canvas");
     this.rightContext = this.rightView.getContext("2d");
+
+    this.motionShift = new Vector3();
+    this.rotation = new Vector3();
 };
 
 Renderer.prototype.resize = function(size)
@@ -70,7 +73,7 @@ Renderer.prototype.render = function(context)
     context.moveTo(this.size.x, 0);
     context.lineTo(this.size.x, this.size.y);
     context.stroke();
-}
+};
 
 Renderer.prototype.clear = function()
 {
@@ -79,7 +82,7 @@ Renderer.prototype.clear = function()
 
     this.rightContext.fillStyle = "black";
     this.rightContext.fillRect(0, 0, this.size.x, this.size.y);
-}
+};
 
 Renderer.prototype.uiText = function(text, position, color, font)
 {
@@ -90,7 +93,7 @@ Renderer.prototype.uiText = function(text, position, color, font)
     this.rightContext.font = font;
     this.rightContext.fillStyle = color;
     this.rightContext.fillText(text, position.x, position.y);
-}
+};
 
 Renderer.prototype.uiCircle = function(position, radius, color, width)
 {
@@ -105,4 +108,49 @@ Renderer.prototype.uiCircle = function(position, radius, color, width)
     this.rightContext.beginPath();
     this.rightContext.arc(position.x, position.y, radius, 0, Math.PI * 2);
     this.rightContext.stroke();
-}
+};
+
+Renderer.prototype.propCircle = function(position, radius, color, width)
+{
+    var trueLeftPosition = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(position), true));
+    var trueRightPosition = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(position), false));
+
+    if(trueLeftPosition.z > 1e-3 && trueRightPosition.z > 1e-3)
+    {
+        this.leftContext.lineWidth = width / trueLeftPosition.z;
+        this.leftContext.strokeStyle = color;
+        this.leftContext.beginPath();
+        this.leftContext.arc(this.half.x + trueLeftPosition.x, this.half.y - trueLeftPosition.y, radius / trueLeftPosition.z, 0, Math.PI * 2);
+        this.leftContext.stroke();
+
+        this.rightContext.lineWidth = width / trueRightPosition.z;
+        this.rightContext.strokeStyle = color;
+        this.rightContext.beginPath();
+        this.rightContext.arc(this.half.x + trueRightPosition.x, this.half.y - trueRightPosition.y, radius / trueRightPosition.z, 0, Math.PI * 2);
+        this.rightContext.stroke();
+    }
+};
+
+Renderer.prototype.applyRotation = function(position)
+{
+    var zRot = Vector3.rotateAroundAxis(position, new Vector3(0, 0, 1), this.rotation.z * Math.PI);
+    var yRot = Vector3.rotateAroundAxis(zRot, new Vector3(1, 0, 0), this.rotation.y * Math.PI);
+    var xRot = Vector3.rotateAroundAxis(yRot, new Vector3(0, 1, 0), this.rotation.x * Math.PI);
+
+    return xRot;
+};
+
+Renderer.prototype.applyMotionShift = function(position)
+{
+    return Vector3.sub(position, Vector3.mul(this.motionShift, new Vector3(10, 10, 0.02)));
+};
+
+Renderer.prototype.applyOcularShift = function(position, left)
+{
+    return Vector3.add(position, new Vector3(left ? this.ocularSpacing / 200 : this.ocularSpacing / -200, 0, 0));
+};
+
+Renderer.prototype.applyPerspective = function(position)
+{
+    return Vector3.div(position, new Vector3(position.z, position.z, 1));
+};
