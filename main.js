@@ -10,7 +10,7 @@ var context = canvas.getContext("2d");
 
 var Configuration = function()
 {
-    this.deviceDiagonal = 13.2;
+    this.deviceDiagonal = 11.5;
     this.ocularsSpacing = 6.5;
     this.ocularsDistance = 4.5;
 };
@@ -50,6 +50,7 @@ window.addEventListener("deviceorientation", function(e)
 
 }, false);
 
+var inc = 0;
 var redraw = function(t)
 {
     context.fillStyle = "rgb(10, 10, 10)";
@@ -63,14 +64,17 @@ var redraw = function(t)
     var position = Vector2.add(renderer.half, Vector2.mul(new Vector2(accelerator.motion.x, accelerator.motion.y), Vector2.fromScalar(100)));
     renderer.uiCircle(position, 8, "rgba(255, 255, 255, 1.0)", 1);*/
 
+    inc += timer.delta;
+
     var circlesColor = "rgba(255, 255, 255, 1.0)";
     renderer.propCircle(new Vector3(0, 0, 10), 10, circlesColor, 1);
     renderer.propCircle(new Vector3(0, 0, 20), 10, circlesColor, 1);
     renderer.propCircle(new Vector3(0, 0, 30), 10, circlesColor, 1);
     renderer.propCircle(new Vector3(0, 0, 100), 10, circlesColor, 1);
+    renderer.propLine(new Vector3(-10, 10, 35 + Math.sin(inc) * 30), new Vector3(10, -10, 35 + Math.sin(inc) * 30), circlesColor, 1);
 
     var fontColor = "rgba(255, 255, 255, 1.0)";
-    var textX = Math.max(-renderer.ocularShift + 20, 20);
+    var textX = Math.max(renderer.ocularShift + 20, 20);
     renderer.uiText("fps: " + Math.round(timer.fps), new Vector2(textX, 25), fontColor);
     renderer.uiText("s: " + renderer.size.x * 2 + " " + renderer.size.y, new Vector2(textX, 35), fontColor);
     renderer.uiText("o: " + round(gyroscope.orientation.x, -3) + " " + round(gyroscope.orientation.y, -3), new Vector2(textX, 45), fontColor);

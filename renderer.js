@@ -8,6 +8,7 @@ var Renderer = function()
     this.ocularSpacing = 0;
     this.ocularDistance = 0;
     this.ocularShift = 0;
+    this.screenDiagonal = 1;
 
     this.leftView = document.createElement("canvas");
     this.leftContext = this.leftView.getContext("2d");
@@ -27,6 +28,8 @@ Renderer.prototype.resize = function(size)
     var half = Vector2.div(this.size, Vector2.fromScalar(2));
     this.half = new Vector2(Math.floor(half.x), Math.floor(half.y));
 
+    this.screenDiagonal = new Vector2(size.x, size.y).magnitude();
+
     this.recalibrate();
 
     this.leftView.width = this.size.x;
@@ -38,8 +41,17 @@ Renderer.prototype.resize = function(size)
 
 Renderer.prototype.recalibrate = function()
 {
-    var screenDiagonal = Vector2.mul(this.size, new Vector2(2, 1)).magnitude();
-    this.ocularShift = Math.floor(this.half.x - (screenDiagonal / this.deviceDiagonal) * (this.ocularSpacing / 2));
+    this.ocularShift = Math.floor(this.half.x - this.centimetersToPixels(this.ocularSpacing / 2));
+};
+
+Renderer.prototype.centimetersToPixels = function(cm)
+{
+    return (this.screenDiagonal / this.deviceDiagonal) * cm;
+};
+
+Renderer.prototype.pixelsToCentimeters = function(px)
+{
+    return (this.deviceDiagonal / this.screenDiagonal) * px;
 };
 
 Renderer.prototype.setCalibrationInfo = function(deviceDiagonal, ocularSpacing, ocularDistance)
@@ -57,14 +69,14 @@ Renderer.prototype.render = function(context)
     context.beginPath();
     context.rect(0, 0, this.size.x, this.size.y);
     context.clip();
-    context.drawImage(this.leftView, this.ocularShift, 0);
+    context.drawImage(this.leftView, -this.ocularShift, 0);
     context.restore();
 
     context.save();
     context.beginPath();
     context.rect(this.size.x, 0, this.size.x, this.size.y);
     context.clip();
-    context.drawImage(this.rightView, this.size.x - this.ocularShift, 0);
+    context.drawImage(this.rightView, this.size.x + this.ocularShift, 0);
     context.restore();
 
     context.strokeStyle = "red";
@@ -112,8 +124,8 @@ Renderer.prototype.uiCircle = function(position, radius, color, width)
 
 Renderer.prototype.propCircle = function(position, radius, color, width)
 {
-    var trueLeftPosition = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(position), true));
-    var trueRightPosition = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(position), false));
+    var trueLeftPosition = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(this.applyRotation(position)), true));
+    var trueRightPosition = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(this.applyRotation(position)), false));
 
     if(trueLeftPosition.z > 1e-3 && trueRightPosition.z > 1e-3)
     {
@@ -131,26 +143,54 @@ Renderer.prototype.propCircle = function(position, radius, color, width)
     }
 };
 
+Renderer.prototype.propLine = function(from, to, color, width)
+{
+    var trueLeftFrom = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(this.applyRotation(from)), true));
+    var trueLeftTo = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(this.applyRotation(to)), true));
+
+    var trueRightFrom = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(this.applyRotation(from)), false));
+    var trueRightTo = this.applyPerspective(this.applyOcularShift(this.applyMotionShift(this.applyRotation(to)), false));
+
+    if(trueLeftFrom.z > 1e-3 && trueLeftTo.z > 1e-3 && trueRightFrom.z > 1e-3 && trueRightTo.z > 1e-3)
+    {
+        this.leftContext.lineWidth = width / trueLeftFrom.z;
+        this.leftContext.strokeStyle = color;
+        this.leftContext.beginPath();
+        this.leftContext.moveTo(this.half.x + trueLeftFrom.x, this.half.y - trueLeftFrom.y);
+        this.leftContext.lineTo(this.half.x + trueLeftTo.x, this.half.y - trueLeftTo.y);
+        this.leftContext.stroke();
+
+        this.rightContext.lineWidth = width / trueRightFrom.z;
+        this.rightContext.strokeStyle = color;
+        this.rightContext.beginPath();
+        this.rightContext.moveTo(this.half.x + trueRightFrom.x, this.half.y - trueRightFrom.y);
+        this.rightContext.lineTo(this.half.x + trueRightTo.x, this.half.y - trueRightTo.y);
+        this.rightContext.stroke();
+    }
+};
+
 Renderer.prototype.applyRotation = function(position)
 {
-    var zRot = Vector3.rotateAroundAxis(position, new Vector3(0, 0, 1), this.rotation.z * Math.PI);
-    var yRot = Vector3.rotateAroundAxis(zRot, new Vector3(1, 0, 0), this.rotation.y * Math.PI);
-    var xRot = Vector3.rotateAroundAxis(yRot, new Vector3(0, 1, 0), this.rotation.x * Math.PI);
+    var zRot = Vector3.rotateAroundAxis(position, new Vector3(0, 0, 1), -this.rotation.z * Math.PI);
+    var yRot = Vector3.rotateAroundAxis(zRot, new Vector3(1, 0, 0), (this.rotation.y / 2) * Math.PI);
+    var xRot = Vector3.rotateAroundAxis(yRot, new Vector3(0, 1, 0), -this.rotation.x * Math.PI);
 
     return xRot;
 };
 
 Renderer.prototype.applyMotionShift = function(position)
 {
-    return Vector3.sub(position, Vector3.mul(this.motionShift, new Vector3(50, 50, 10)));
+    return Vector3.sub(position, this.motionShift);
 };
 
 Renderer.prototype.applyOcularShift = function(position, left)
 {
-    return Vector3.add(position, new Vector3(left ? this.ocularSpacing / 2 : this.ocularSpacing / -2, 0, 0));
+    return Vector3.add(position, new Vector3(this.ocularSpacing / (left ? 40 : -40), 0, 0));
 };
 
 Renderer.prototype.applyPerspective = function(position)
 {
-    return Vector3.div(position, new Vector3(position.z / 100, position.z / 100, 100));
+    var divider = position.z / this.ocularDistance;
+    var proportion = this.half.y / this.half.x;
+    return Vector3.mul(Vector3.div(position, new Vector3(divider, divider, this.half.x / 2)), new Vector3(this.half.x / 2, this.half.y * proportion / 2, 1));
 };
